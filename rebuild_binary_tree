@@ -1,0 +1,51 @@
+// All Copyright reserved by Informatic Lab of Steve
+// source problem:soj 1935
+#include <iostream>
+#include <string>
+#include <map>
+#define LEFT(x) 2*x+1
+#define RIGHT(x) 2*x+2
+using namespace std;
+map<int, char> my_map;
+inline void print(map<int, char> my_map) {
+    for (map<int, char>::iterator it = my_map.begin(); it != my_map.end(); ++it) {
+        cout << it->second;
+    }
+    cout << endl;
+}
+void handler(string pre, string in, int r) {
+    while (!in.empty() && !pre.empty()) {
+        char root = pre[0];
+        my_map[r] = root;
+        int pos, length;
+        pos = in.find(root);
+        length = in.length();
+        string in_left, in_right, pre_left, pre_right;
+        in_left = in.substr(0, pos);
+        in_right = in.substr(pos + 1, length - 1);
+        int i;
+        for (i = 1; i < length; i++) {
+            if (in_left.find(pre[i]) == string::npos)
+                break;
+        }
+        pre_left = pre.substr(1, i - 1);
+        pre_right = pre.substr(i, length);
+        handler(pre_left, in_left, LEFT(r));
+        pre = pre_right;
+        in = in_right;
+        r = RIGHT(r);
+    }
+}
+
+int main() {
+    int counter;
+    string pre_string, in_string;
+    cin >> counter;
+    while (counter--) {
+        cin >> pre_string >> in_string;
+        handler(pre_string, in_string, 0);
+        print(my_map);
+        my_map.clear();
+    }
+    return 0;
+}                                 
