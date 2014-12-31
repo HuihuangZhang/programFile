@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+#define MAX 2000000
+#include <string.h>
+
+
+int main() {
+  int weight[201][201], visited[201], distance[201];
+  int num_city, num_road, city1, city2, length;
+  int start, end;
+  while (cin >> num_city >> num_road) {
+
+    //初始化
+    memset(visited, 0, sizeof(visited));
+    for (int i = 0; i < num_city; i++)
+      for(int j = 0; j < num_city; j++)
+    weight[i][j] = MAX;
+
+
+    for (int i = 0; i < num_road; i++) {
+      cin >> city1 >> city2 >> length;
+      if (length < weight[city1][city2]) {
+    weight[city1][city2] = length;
+    weight[city2][city1] = length;
+      }
+    }
+    cin >> start >> end;
+    if (start == end) {
+      cout << 0 << endl;
+      continue;
+    }
+    visited[start] = 1;
+
+    //初始化distance数组
+    for (int i = 0; i < num_city; i++) {
+      distance[i] = weight[start][i];
+    }
+    distance[start] = 0;
+
+    for (int i = 0; i < num_city; i++) {
+      int min = MAX, index = i;
+      for (int j = 0; j < num_city; j++) {
+    if (!visited[j] && distance[j] < min) {
+      min = distance[j];
+      index = j;
+    }
+      }
+      if (min != MAX) {
+    visited[index] = 1;
+    for (int j = 0; j < num_city; j++)
+      if (!visited[j] && distance[j] > min + weight[index][j])
+        //cout << distance[index] + weight[index][j];
+        distance[j] = min + weight[index][j];
+      }
+      else break;
+    }
+    if (visited[end]) cout << distance[end] << endl;
+    else cout << -1 << endl;
+  }
+  return 0;
+}                                 
