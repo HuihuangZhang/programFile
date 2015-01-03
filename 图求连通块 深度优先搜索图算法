@@ -1,0 +1,38 @@
+#include <iostream>
+#include <string.h>
+#include <queue>
+using namespace std;
+int graph[101][101];
+
+//depth search first using queue
+void DSF(int visitor, int n, int* visited) {
+  queue<int> q;
+  q.push(visitor);
+  while (!q.empty()) {
+    for (int i = 1; i <= n; i++)
+      if (graph[q.front()][i] && !visited[i]) q.push(i);
+    visited[q.front()] = 1;
+    q.pop();
+  }
+}
+
+int main() {
+  int m, n, node1, node2, block, visited[101];
+  cin >> n >> m;
+  memset(graph, 0, sizeof(graph));
+  memset(visited, 0, sizeof(visited));
+  block = 0;
+  for (int i = 0; i < m; i++) {
+    cin >> node1 >> node2;
+    graph[node1][node2] = 1;
+    graph[node2][node1] = 1;
+  }
+  for (int i = 1; i <= n; i++) {
+    if (!visited[i]) {
+      DSF(i, n, visited);
+      block++;
+    }
+  }
+  cout << block << endl;
+  return 0;
+}                                 
