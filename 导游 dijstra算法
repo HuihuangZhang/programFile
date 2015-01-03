@@ -1,0 +1,58 @@
+#include <iostream>
+using namespace std;
+#include <string.h>
+
+#define MAX 10000
+inline int mi(int &a, int &b) {
+  return (a>b)?b:a;
+}
+
+int main() {
+  int counter, num_city, num_road;
+  int city1, city2, busload;
+  int start, end, num_tourist;
+  int transfer;
+  int visited[101], visitor[101], record[101][101];//visited记录节点访问情况，visitor记录开始到每个节点的载客量
+
+  cin >> counter;
+  while (counter--) {
+    cin >> num_city >> num_road;
+
+    //初始化
+    memset(record, 0, sizeof(record));
+    memset(visited, 0, sizeof(visited));
+    //初始化全部未访问
+
+    for (int i = 0; i < num_road; i++) {
+      cin >> city1 >> city2 >> busload;
+      record[city1][city2] = busload;
+      record[city2][city1] = busload;
+    }
+    cin >> start >> end >> num_tourist;
+    visited[start] = 1;
+
+    for (int i = 1; i <= num_city; i++)
+      visitor[i] = record[start][i];
+    visitor[start] = MAX;
+    for (int i = 1; i <= num_city; i++) {
+      int item = 0, index = start;
+      for (int j = 1; j <= num_city; j++)
+	if (!visited[j] && item < visitor[j]) {
+	  item = visitor[j];
+	  index = j;
+	}
+      visited[index] = 1;
+      for (int j = 1; j <= num_city; j++) {
+	int temp = mi(record[index][j], item);
+	if (!visited[j] && temp > visitor[j]) {
+	  visitor[j] = temp;
+	}
+      }
+      if (index == end) break;
+    }
+    visitor[end] -= 1;
+    transfer = num_tourist / visitor[end] + ((num_tourist % visitor[end])?1:0);
+    cout << transfer << endl;
+  }
+  return 0;
+}
