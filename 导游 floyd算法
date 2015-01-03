@@ -1,0 +1,82 @@
+#include <iostream>
+using namespace std;
+#define MAXV 101
+#define INT_MAX (-1)
+
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
+
+// 邻接矩阵。
+struct graph
+{
+    int weight[MAXV][MAXV];
+    int nvertices;
+};
+
+// 利用 Floyd-Warshall 算法计算 Maxmin 距离。
+int floyd_warshall(graph * g, int cstart, int cend)
+{
+    int vertices = g->nvertices;
+
+    for (int i = 1; i <= vertices; i++)
+        g->weight[i][i] = 0;
+
+    for (int k = 1; k <= vertices; k++)
+        for (int i = 1; i <= vertices; i++)
+            for (int j = 1; j <= vertices; j++)
+                g->weight[i][j] =
+                    max(g->weight[i][j],
+                    min(g->weight[i][k], g->weight[k][j]));
+
+    return g->weight[cstart][cend];
+}
+
+// 读入图的数据，cities 为城市数，roads 为公交路线数。
+void read_graph(graph * g, int cities, int roads)
+{
+    int cfirst, csecond, passengers;
+
+    for (int i = 1; i < MAXV; i++)
+        for (int j = 1; j < MAXV; j++)
+            g->weight[i][j] = INT_MAX;
+
+    g->nvertices = cities;
+
+    for (int r = 0; r < roads; r++)
+    {
+        cin >> cfirst >> csecond >> passengers;
+
+        g->weight[cfirst][csecond] = passengers;
+        g->weight[csecond][cfirst] = passengers;
+    }
+}
+
+int main(int ac, char *av[])
+{
+    int cities, roads;
+    int cstart, cend, tourists;
+    int trips;
+    graph g;
+    int counter;
+    cin >> counter;
+    while (counter--) {
+        cin >> cities >> roads;
+            // 读入图的数据。
+            read_graph(&g, cities, roads);
+    
+            // 读入起始城市和终点城市及游客数量。
+            cin >> cstart >> cend >> tourists;
+    
+            // 利用 Floyd-Warshall 算法计算 Maxmin 距离。
+            int maxmin = floyd_warshall(&g, cstart, cend);
+    
+            maxmin = maxmin - 1;
+    
+            // 若不能整除，则需要多一次往返。
+            trips = tourists / maxmin + (tourists % maxmin ? 1 : 0);
+    
+            // 注意输出空行。
+            cout << trips << endl;
+    }
+    return 0;
+}                                 
