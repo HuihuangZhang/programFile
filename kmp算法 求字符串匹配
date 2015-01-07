@@ -1,0 +1,82 @@
+///kmp算法
+///重点是求next数组的值
+#include <iostream>
+#include <string>
+using namespace std;
+void calculateNext(int* a, int length);
+int next[62000];
+
+int main() {
+  int di_or, di_match;
+  int index_or, index_match;
+  int arr_or[62000], arr_match[62000];
+  bool match;
+  ///输入到EOF结束
+  while (cin >> di_match) {
+    match = false;
+    for (int i = 0; i < di_match; i++) {
+      cin >> arr_match[i];
+    }
+    cin >> di_or;
+    for (int i = 0; i < di_or; i++) {
+      cin >> arr_or[i];
+    }
+
+    calculateNext(arr_match, di_match); //计算next数组
+
+    for (index_or = index_match = 0; index_or < di_or;) {
+      if (arr_or[index_or] == arr_match[index_match]) {
+    index_or++;
+    index_match++;
+      } else {
+    if (next[index_match] == -1)  {
+      index_or++;
+      index_match = 0;
+    }
+    else index_match = next[index_match];
+      }
+      if (index_match == di_match) {
+    match = true;
+    break;
+      }
+    }
+    if (match) cout << index_or - di_match << endl;
+    else cout << "no solution" << endl;
+  }
+  return 0;
+}
+
+///求next数组
+void calculateNext(int* arr_match, int length) {
+  int index1, index2;
+  index1 = 0;
+  index2 = -1;
+  next[0] = -1;
+  while (index1 < length) {
+    if (index2 == -1 || arr_match[index1] == arr_match[index2]) {
+      index1++;
+      index2++;
+      next[index1] = index2;
+    }
+    else index2 = next[index2];
+  }
+}
+
+/*
+///下面是动态开辟数组的方法,记得在main函数结束时对动态开辟数组的进行free
+void calculateNext(int* arr_match, int length) {
+  next = new int[length + 1];
+  int index1, index2;
+  index1 = 0;
+  index2 = -1;
+  next[0] = -1;
+  while (index1 < length) {
+    if (index2 == -1 || arr_match[index1] == arr_match[index2]) {
+      index1++;
+      index2++;
+      next[index1] = index2;
+    }
+    else index2 = next[index2];
+  }
+}
+*/
